@@ -14,7 +14,9 @@ unsigned long, 1000000L de ce se pune L (pentru a-l casta la tip long pe 4 octet
 Pe scurt trebuie sa stiti range-urile la tipurile de date, de ce inmultim cu 1000000 de exemplu si ce unitate de masura se obtine rezultatul.
 
 # 2
-La problemele cu factor de umplere folosind watchdog, atentie la factorul de umplere. Daca avem factor de umplere > 50 % folosind starile, trebuie sa alegem la iesire pinii care au <span style="background:#b1ffff">pull-up activ extern, pentru ca la reset, acestea sa aiba valoarea 1. </span>
+La problemele cu factor de umplere folosind watchdog, atentie la factorul de umplere. Daca avem factor de umplere > 50 % folosind starile, trebuie sa alegem la iesire pinii care au
+
+<span style="background:#40a9ff">pull-up activ extern, pentru ca la reset, acestea sa aiba valoarea 1</span>
  
 Doar 2 pini satisfac acest criteriu si acestia sunt PC0 si PC1.
 
