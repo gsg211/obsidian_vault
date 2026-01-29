@@ -20,6 +20,16 @@ $$
 	OCR_XN= timer_{max} \cdot duty\ cycle / 100
 $$
 
+###### cum obtii duty cycle => important
+
+T = 1/frecventa
+T = p + q  
+p=timp_on
+q=timp_off
+
+duty cycle = p / (p+q) 
+adica timp_on / timp_total
+
 
 ### Mod operare
 

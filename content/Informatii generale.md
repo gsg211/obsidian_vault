@@ -1,8 +1,16 @@
+
 [[Porturi]]
 
 [[Intreruperi]]
 
 [[Comunicarea Seriala]]
 
+[[Timer-Counter]]
 
-[[Counter]]
+[[CRC]]
+
+[[Pointeri in iar]]
+
+[[Watchdog]]
+
+[[Memoria Flash]]
