@@ -12,7 +12,9 @@
 
 [[timp intre 2 reseturi]]
 
+#### variante
 
+[[rezolvate t]]
 #### drive
 
 [[poze]]
