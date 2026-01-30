@@ -2,7 +2,6 @@
 
 ![[image.png]]
 ```c
-
 #include <ioavr.h>
 #include <inavr.h>
 

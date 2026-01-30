@@ -1,4 +1,9 @@
 
+> [!tip]
+> pt osciloscop folosec pinu 26 (ultimu)
+> pe j3-> pin 26 (MB4-RST) ->  107 -> PE3
+
+
 [[Porturi]]
 
 [[Intreruperi]]
@@ -14,3 +19,5 @@
 [[Watchdog]]
 
 [[Memoria Flash]]
+
+[[Functii intrinseci]]
