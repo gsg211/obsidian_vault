@@ -1,6 +1,12 @@
-# 1
+# 1 + comentariu ai
 
 ![[image.png]]
+
+> [!question] Mod watchdog
+> Varianta profului e cu reset insa e posibil sa mearga mai oke cu modul intrerupere
+
+
+
 ```c
 #include <ioavr.h>
 #include <inavr.h>
@@ -64,8 +70,126 @@ void setup_output_pin(){
 
 ```
 
+## Explicatie ai
+
+Cum funcționează codul 
+
+Toggle prin Reset
+
+Pornire/Reset Microcontrolerul pornește. Prima instrucțiune este `MCUSR = 0`, care încearcă să curețe flag-urile de reset.
+
+Starea Persistentă Variabila `persistent_state` este marcată cu `__no_init`. Asta înseamnă că, deși procesorul se resetează, valoarea variabilei **nu** este ștearsă din RAM. Ea rămâne acolo de la o execuție la alta.
+
+Schimbarea Pinului 
+    *   Dacă `persistent_state` era 0, pune pinul PE4 pe LOW.
+    *   Dacă era 1, îl pune pe HIGH.
+    *   Apoi inversează valoarea (`!persistent_state`) pentru următorul reset.
+
+Se activează Watchdog-ul în modul "System Reset". Deoarece nu setezi biții de prescalare (WDP0-3), ei rămân 0, ceea ce corespunde celui mai scurt timp: **aprox. 16 ms**.
+
+Programul intră în `while(1)`. După 16 ms, Watchdog-ul resetează procesorul.
+
+Procesorul o ia de la capăt, vede noua valoare în `persistent_state`, schimbă pinul și se resetează iar.
+
+Calcul frecvență:
+*   Un ciclu complet (un HIGH și un LOW) durează: $16ms + 16ms = 32ms$.
+*   Frecvența: $f = 1 / 0.032s = 31.25 \text{ Hz}$.
+*   Este foarte aproape de cei 30 Hz ceruți (oscilatorul intern de 128kHz al WDT-ului are oricum o eroare de +/- 10%).
+
+---
+
+ ###### Ce trebuie corectat 
+există câteva probleme critice de implementare pentru ATmega1280:
+
+ASTA ZICE AI-UL NU STIU CAT DE ACCURATE E
+
+
+ A. Problema ferestrei de 4 cicli (WDTCSR)
+ 
+Pentru a modifica registrul `WDTCSR`, datasheet-ul impune o secvență strictă de siguranță: trebuie să scrii `WDCE` și `WDE` simultan, iar **în următorii 4 cicli de ceas** să scrii noua valoare.
+
+În funcția ta `setup_WD`:
+
+```c
+void setup_WD(){
+    WDTCSR |= ((1<<WDTCE) | (1<<WDE)); // Pasul 1: OK
+    WDTCSR |= (1<<WDE);                // Pasul 2: Posibil prea lent!
+}
+```
+
+Operația `|=` (OR) implică o citire, o modificare și o scriere (mai mulți cicli de ceas). Este mai sigur să scrii direct valoarea:
+
+```c
+void setup_WD(){
+    WDTCSR = (1<<WDTCE) | (1<<WDE); // Deschide fereastra
+    WDTCSR = (1<<WDE);               // Setează modul Reset și WDP=0 (16ms)
+}
+```
+
+ B. Problema flag-ului WDRF (MCUSR)
+ 
+Pe ATmega1280, dacă bitul `WDRF` din `MCUSR` nu este șters, nu poți dezactiva sau modifica Watchdog-ul. Resetarea lui la 0 trebuie făcută **imediat** după pornire.
+```c
+MCUSR &= ~(1 << WDRF); // Corect ar fi așa
+```
+
+C. Timpul de Start-up (Problema frecvenței reale)
+După fiecare reset WDT, procesorul nu începe instantaneu să execute codul. Există un timp de "Start-up" (stabilit prin Fuse Bits) pentru stabilizarea cristalului de cuarț (de obicei 16k sau 64k cicli de ceas).
+*   Dacă ai un cristal de 16MHz, 64k cicli înseamnă încă **4ms** de întârziere la fiecare reset.
+*   Perioada ta ar deveni $(16ms + 4ms) \times 2 = 40ms \rightarrow 25 \text{ Hz}$.
+*   Pentru a obține exact 30 Hz, va trebui să ajustezi biții de prescalare ai WDT sau să folosești Modul Întrerupere în loc de Reset.
+
+Versiunea Corectată (Recomandată pentru examen)
+
+Dacă vrei să fii sigur că profesorul îți punctează codul ca fiind robust, folosește Modul Întrerupere al Watchdog-ului. Acesta nu resetează procesorul, deci elimini eroarea dată de timpul de start-up:
+
+```c
+#include <ioavr.h>
+#include <inavr.h>
+#include <intrinsics.h> // Pentru __enable_interrupt()
+
+#pragma vector = WDT_vect  // Sintaxă specifică IAR pentru ISR
+__interrupt void WDT_ISR(void) {
+    PORTE ^= (1 << PE4);   // Toggle pin PE4 (Mult mai rapid și precis)
+}
+
+void setup_WD() {
+    __disable_interrupt();
+    __watchdog_reset();
+    
+    MCUSR &= ~(1 << WDRF); // Pas critic pentru ATmega1280
+    
+    // Secvență de siguranță: WDCE și WDE
+    WDTCSR = (1 << WDTCE) | (1 << WDE);
+    
+    // WDIE = 1 (Interrupt Mode), WDE = 0 (No Reset)
+    // WDP0-3 = 0000 (16ms timeout)
+    WDTCSR = (1 << WDIE); 
+    
+    __enable_interrupt();
+}
+
+int main() {
+    DDRE |= (1 << PE4); // Configurare pin ieșire
+    setup_WD();
+    
+    while(1) {
+        // Procesorul stă liniștit aici, nu se mai resetează.
+        // Întreruperea se ocupă de tot.
+    }
+}
+```
+
+**De ce e mai bun ăsta?**
+1.  **Frecvență constantă:** Nu mai depinde de timpul de boot al procesorului.
+2.  **Consum mic:** Poți pune procesorul în modul `Sleep` în `while(1)`.
+3.  **Cod curat:** Nu ai nevoie de `__no_init`.
+
+Dacă totuși **trebuie** să folosești varianta cu Reset (cerința examenului), asigură-te că scrii registrele dintr-o singură mișcare (fără `|=`) și că menționezi că frecvența este limitată de oscilatorul intern de 128kHz.
+
 # 2
 
+vezi si exemplu prof 
 
 ![[image 1.png]]
 
@@ -316,7 +440,54 @@ void sendString(uint8_t string_to_send[], uint8_t string_length, uint8_t isr_saf
 
 ```
 
+Când procesorul pornește (după un reset), prima întrebare pe care și-o pune este: **"De ce m-am resetat?"**.
 
+- Verifică registrul MCUSR. Dacă bitul WDRF este 1, înseamnă că ultima dată procesorul a fost resetat de Watchdog.
+
+- Dacă a fost un reset de Watchdog, ia valorile salvate în ovfs și current_ticks (care reprezintă timpul scurs în ciclul anterior) și face niște calcule.
+
+Programul vrea să transforme timpul măsurat într-o frecvență.
+
+- **Timer 3** este folosit ca un cronometru (stopwatch).
+
+- Numără de câte ori Timer-ul a făcut "overflow" (a ajuns la maxim și a luat-o de la capăt) în variabila ovfs.
+
+- Combină numărul de overflow-uri cu valoarea curentă a timer-ului (current_ticks) pentru a afla totalul de "tick-uri" de ceas scurse.
+
+- Calculul freq_hz = ticks_per_second / total_ticks determină de câte ori pe secundă s-ar produce acel reset dacă s-ar repeta constant.
+
+După calcul, rezultatul (ex: 1.050 KHZ) este formatat într-un text cu snprintf și trimis prin portul serial către un PC, folosind un sistem de cozi (buffere) și întreruperi pentru a nu bloca procesorul.
+
+După ce a trimis datele, programul:
+
+1. Configurează din nou Watchdog-ul să expire după un timp scurt (aprox. 15ms).
+
+2. Resetează cronometrul (Timer 3) la zero.
+
+3. Intră într-o buclă infinită while(1) unde scrie non-stop valoarea curentă a cronometrului în current_ticks.
+
+4. **Important:** Programul NU dă "mâncare la câine" (nu apelează comanda de resetare a watchdog-ului).
+
+5. Așteaptă moartea: Watchdog-ul expiră, procesorul primește reset, iar tot procesul o ia de la capăt (înapoi la pasul 2).
+
+###### Potentiale probleme
+
+Problema cea mai mare este eroarea de calcul: ai scris freq_hz & 1000 pentru a obține restul de herți, dar operatorul & este un "ȘI pe biți". Trebuia să folosești operatorul modulo % (adică freq_hz % 1000), altfel rezultatul afișat va fi complet greșit.
+
+O altă problemă critică este lipsa atomicității. Variabila ovfs are 32 de biți, iar procesorul AVR este pe 8 biți. Când citești ovfs în main pentru calcul, procesorul face 4 citiri separate. Dacă exact în acel moment vine o întrerupere de timer care modifică ovfs, valoarea citită de tine va fi coruptă. Trebuie să dezactivezi întreruperile (cli()) înainte de a copia valorile variabilelor multi-octet și să le activezi după (sei()).
+
+Variabilele declarate cu \__no_init (ovfs și current_ticks) reprezintă un risc la prima pornire. Când alimentezi plăcuța (Power-On), memoria RAM are valori aleatorii (gunoi). Deoarece codul tău nu le inițializează cu zero decât dacă vede un reset de watchdog, prima măsurătoare va folosi acele valori aleatorii și va afișa prostii. Ar trebui să verifici în MCUSR dacă a fost un reset de pornire (PORF) și să le pui pe zero manual atunci.
+
+În bucla while(1), scrierea current_ticks = TCNT3 este periculoasă. Resetul de watchdog poate veni exact în momentul în care procesorul a apucat să scrie doar primul octet din cei doi ai variabilei current_ticks. Astfel, după reset, vei citi o valoare care nu a existat niciodată în realitate. Mai sigur ar fi să citești TCNT3 direct în calculul de după reset, deși registrul se resetează la zero, deci salvarea lui în buclă e singura variantă – dar trebuie făcută cu grijă.
+
+Logica de calcul pentru frecvență pare inversată sau neadaptată la valorile WDT. Dacă watchdog-ul este setat la 15ms (cum ai pus tu prin WDP0), frecvența evenimentului este de aproximativ 66 Hz. Calculul tău nr_khz = freq_hz / 1000 va da rezultatul 0, deoarece 66 împărțit la 1000 este 0. Codul pare să se aștepte la o frecvență mult mai mare decât cea reală a unui watchdog.
+
+
+În funcția put_txbuf, folosești \__enable_interrupt() la final. Aceasta este o problemă dacă funcția este apelată dintr-o altă zonă de cod unde întreruperile trebuiau să rămână dezactivate. Metoda corectă este să salvezi registrul de stare SREG la început și să îl restaurezi la final.
+
+În setup_WD, ai activat watchdog-ul în regim de "System Reset", dar ai setat un timp de expirare foarte scurt (WDP0 înseamnă ~15ms). Având în vedere că trimiterea string-ului pe serială la 9600 baud durează destul de mult, trebuie să te asiguri că procesul de trimitere nu este întrerupt de un nou reset înainte să se termine.
+
+În snprintf, ai folosit formatul %u.%3lu. Dacă restul împărțirii este mic (de exemplu 5), acesta va fi afișat ca "0. 5 KHZ" (cu spații goale). Formatul corect pentru frecvență ar fi %03lu, ca să afișeze "0.005 KHZ"
 # 3.
 
 ![[image 2.png]]
@@ -551,6 +722,62 @@ void sendString(uint8_t string_to_send[], uint8_t string_length, uint8_t isr_saf
 }
 ```
 
+
+- **__root**: Această directivă IAR forțează compilatorul să păstreze funcția în cod, chiar dacă nu este apelată explicit (prevenind optimizarea).
+
+- **Aflarea adresei**: În main, codul ia adresa de început a funcției sum și adresa funcției imediat următoare sum_end.
+
+- **Calculul dimensiunii**: fct_sz = end - start. Practic, se măsoară câți octeți ocupă codul mașină al funcției sum în Flash.
+    
+- **__huge**: Este un tip de pointer care permite accesarea întregii memorii Flash (peste limita de 64KB), necesar pe microcontrolerele cu memorie mare.
+
+
+Funcția crc16 implementează algoritmul standard **CRC-16-CCITT** (polinom 0x1021).
+
+- **Logica**: Pentru fiecare octet din funcția sum, se face un XOR cu registrul CRC, apoi se verifică bit cu bit (8 iterații) dacă trebuie aplicat polinomul prin operații de shiftare și XOR.
+    
+- **Scop**: CRC-ul este folosit pentru a verifica integritatea datelor. Dacă un singur bit din codul funcției sum s-ar schimba (eroare de memorie), CRC-ul ar fi complet diferit.
+
+
+1. **Inițializare adrese**: Se obțin pointerii către funcția țintă.
+    
+2. **Calcul mărime**: Se află câți octeți trebuie citiți.
+    
+3. **Calcul CRC**: Se apelează crc16, care citește direct din memoria Flash (program).
+    
+4. **Configurare USART3**: Se setează baud rate-ul la 9600 și se activează întreruperile.
+    
+5. **Formatare String**: Se folosește snprintf pentru a crea un mesaj lizibil care conține adresele de start/end și valoarea CRC calculată.
+    
+6. **Trimitere**: sendString pune mesajul în buffer-ul de transmisie, iar de aici întreruperile se ocupă de trimiterea efectivă octet cu octet către PC.
+
+###### ce poate fi gresit
+
+- Compilatorul și Linker-ul nu garantează că funcțiile sunt puse în memorie în ordinea în care le scrii tu în fișierul .c. Este foarte posibil ca sum_end să fie plasată de linker înaintea funcției sum sau la o distanță mult mai mare, caz în care fct_sz va fi o valoare imensă sau negativă (eroare de calcul).
+    
+- **Soluție:** Pentru a fi sigur, ar trebui să verifici fișierul .map generat de linker sau să folosești directive de secțiuni (pragma section) pentru a forța gruparea lor.
+
+
+ Citirea din Memoria Program (Flash vs RAM)
+
+Pe AVR, memoria Flash (unde stă codul) și memoria RAM au spații de adresare diferite.
+
+code C
+
+```
+data = *(unsigned char __huge *)addr_start;
+```
+
+**De ce este riscant:**
+
+- Deși în IAR pointerii __huge pot accesa Flash-ul, trebuie să te asiguri că acea adresă este interpretată corect ca fiind în spațiul de cod (Code Space). Dacă compilatorul crede că e un pointer către RAM, va citi date de la adresa respectivă din RAM, nu din Flash, rezultând un CRC greșit.
+
+- **Soluție:** Folosește tipul de date __code pentru pointeri atunci când citești instrucțiuni: unsigned char const __code *.
+
+
+- %04luX este o combinație greșită. Dacă vrei long unsigned hex, se folosește %08lX (pentru adrese pe 32 biți).
+    
+- snprintf pe AVR consumă foarte multă memorie Flash și RAM. Dacă microcontrolerul are puțină memorie, s-ar putea să facă stack overflow.
 # 4
 
 ![[image 3.png]]
