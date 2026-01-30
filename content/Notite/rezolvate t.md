@@ -1092,3 +1092,60 @@ void sendString(uint8_t string_to_send[], uint8_t string_length, uint8_t isr_saf
 }
 
 ```
+
+Acest cod configurează un microcontroler AVR pentru a genera un semnal **PWM (Pulse Width Modulation)** cu o frecvență fixă, dar cu un **Duty Cycle (factor de umplere) variabil** care se modifică automat la fiecare 0,5 secunde. Rezultatul este raportat prin interfața serială (USART3).
+
+
+Obiectivul Principal
+
+- **Semnal PWM**: Generat pe pinul **PE3** (OC3A) cu o frecvență de **5 kHz**.
+    
+- **Modificare automată**: Duty Cycle-ul (DC) începe de la 5%, crește din 2 în 2 unități până la 90%, apoi scade înapoi la 5%, repetându-se la infinit.
+    
+- **Interval**: Actualizarea DC se face la fiecare **500 ms** (0.5 secunde).
+    
+- **Monitorizare**: La fiecare schimbare, trimite pe serială mesajul: <FU=XX%>.
+
+Timerul 3 este configurat în **Modul 14 (Fast PWM cu TOP în ICR3)**:
+
+- **Frecvența**: Este determinată de registrul ICR3. Calculul (FOSC/N)/FREQ - 1 setează pragul de sus pentru a obține exact 5 kHz.
+
+- **Duty Cycle**: Este determinat de registrul OCR3A. Funcția set_oc3a_with_dc calculează valoarea acestui registru ca procent din ICR3.
+
+- **Pinul PE3**: Este setat să treacă în "0" (clear) când numărătoarea ajunge la OCR3A și în "1" (set) când ajunge la fund (bottom).
+
+
+Timerul 4 este folosit pentru a măsura trecerea timpului:
+
+- Este configurat să genereze o întrerupere la fiecare **1 ms** (FTRIGGER = 1000UL).
+
+- În interiorul întreruperii TIMER4_OVF_ISR, variabila msecs crește.
+
+- Când msecs ajunge la **500**, se întâmplă evenimentul principal:
+    
+    1. Resetează contorul msecs.
+    
+    2. Apelează inc_dc() pentru a calcula noua valoare a Duty Cycle-ului.
+    
+    3. Actualizează hardware-ul PWM (set_oc3a_with_dc).
+    
+    4. Trimite prin USART noul status.
+
+
+
+Funcția inc_dc() gestionează direcția de creștere/scădere:
+
+- Dacă inc_decn este 1: Adună 2 la DC. Dacă a depășit 90, schimbă direcția.
+    
+- Dacă inc_decn este 0: Scade 2 din DC. Dacă a scăzut sub 5, schimbă direcția.  
+    Asta creează un efect de "respirație" (fading) al semnalului PWM.
+
+1. **Pin Ieșire PWM**: PE3 (Digital Pin 5 pe Arduino Mega).
+2. **Frecvență PWM**: 5000 Hz.
+3. **Prescaler Timere**: 8.
+4. **Baud Rate Serial**: 9600 bps.
+
+- **Sincronizare**: Actualizarea OCR3A se face în întreruperea altui timer. Deși în modul Fast PWM acest registru are "double buffering" (se actualizează doar la TOP), este bine că nu oprești timerul în timpul modificării.
+
+- **snprintf în ISR**: Utilizarea snprintf și sendString în interiorul unei întreruperi (TIMER4_OVF_ISR) este considerată o practică proastă ("bad practice") deoarece aceste funcții sunt lente. Ar fi mai bine să setezi un flag în ISR și să procesezi trimiterea în while(1)-ul din main.
+
