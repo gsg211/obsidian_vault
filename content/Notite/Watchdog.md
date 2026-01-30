@@ -115,3 +115,68 @@ Timer-ul va fi configurat în mod normal, cu un prescaler potrivit și întrerup
 La prima execuție, aplicația va porni WDT-ul și timer-ul. După resetarea cauzată de WDT, valorile salvate vor fi folosite pentru a calcula perioada efectivă a WDT-ului conform relației T = 1 / f. 
 
 Calculul se va face în unități convenabile (milisecunde, nanosecunde, kHz), iar rezultatul va fi transmis pe serială folosind funcții dedicate. După transmiterea rezultatului, timer-ul și variabilele vor fi resetate, iar ciclul de măsurare se poate repeta
+
+![[Pasted image 20260130153902.png]]
+
+
+###### Cod prof
+
+```c
+#include <iom1280.h> 
+#include <inavr.h> #include <stdint.h> 
+#include "mylib.h"
+
+__no_init uint16_t Timer1_currentValue;
+__no_init uint8_t Timer1_numberOverflows;
+
+// Rutina de întrerupere pentru overflow-ul Timer1 
+#pragma vector = TIMER1_OVF_vect __interrupt void T1_OVF() 
+{ 
+// Incrementarea numărului de overflow-uri  
+	Timer1_numberOverflows++; 
+}
+
+int main(void)
+{
+	MCUSR = 0;
+
+	USART_initialize(BAUD_RATE);
+
+	TCCR1B |= (1 << CS10);
+	TIMSK1 |= (1 << TOIE1);
+
+	__enable_interrupt();
+
+	WDTCSR |= (1 << WDCE) | (1 << WDE);
+	WDTCSR = (1 << WDE) | (1 << WDP0);
+
+	if (Timer1_numberOverflows > 0 || Timer1_currentValue > 0)
+	{
+		uint32_t number =
+			(Timer1_numberOverflows * (uint64_t)65535) +
+			Timer1_currentValue;
+
+		uint8_t period = number * 0.0000625;
+		uint16_t time_per_clock = (period * 1000000) / 4096;
+		uint8_t frecv = (1000000. / time_per_clock);
+
+		uint16_t copyFrecv = frecv;
+		myprint(INTEGER, &copyFrecv);
+	}
+
+	Timer1_numberOverflows = 0;
+	Timer1_currentValue = 0;
+	TCNT1 = 0;
+
+	asm("WDR");
+
+	while (1)
+	{
+		Timer1_currentValue = TCNT1;
+	}
+
+	return 0;
+}
+
+```
+
