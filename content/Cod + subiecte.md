@@ -1,3 +1,19 @@
+
+
+#### variante
+
+[[rezolvate t]]
+
+[[Exercitii generate gemini]]
+#### drive
+
+[[poze]]
+
+[[Subiecte pdf]]
+
+
+[[Subiecte anterioare rezolvate]]
+
 #### secvente cod
 
 
@@ -11,16 +27,4 @@
 
 
 [[timp intre 2 reseturi]]
-
-#### variante
-
-[[rezolvate t]]
-#### drive
-
-[[poze]]
-
-[[Subiecte pdf]]
-
-
-[[Subiecte anterioare rezolvate]]
 

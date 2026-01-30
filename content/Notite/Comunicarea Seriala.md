@@ -9,25 +9,69 @@
 $$
 baud\ rate = (Foscilator / 16 / baud )-1
 $$
+### COMUNICAȚIA ASINCRONĂ – UART
 
-### comunicare sincronizata
+Universal Asynchronous Receiver-Transmitter
+asincron => nu exista clock comun
 
-Acest tip de comunicaţie este caracterizat de faptul că, deşi mesajul este transmis într-un mod sincron, nu
-există o sincronizare în intervalul de timp dintre două mesaje. Informaţia este transmisă sub forma unor blocuri
-de caractere sau a unor biţi succesivi, fără biţi de START şi STOP. 
 
-Pentru ajustarea oscilatorului local la începutul
-unui mesaj, fiecare mesaj este precedat de un număr de caractere speciale de sincronizare, de exemplu, caracterul
-**SYN (0x16)**. Pentru menţinerea sincronizării, se pot insera caractere de sincronizare suplimentare în mesajul
-transmis, la anumite intervale de timp.
+Biţii de START şi de STOP încadrează fiecare caracter transmis; caracterul transmis între aceşti 2 biţi reprezintă un cadru de date. 
+
+În cazul comunicaţiei asincrone, intervalul de timp între transmisia a 2 caractere succesive este variabil, pe durata acestui interval linia de comunicaţie fiind în starea 1 logic. Acest mod de comunicaţie este numit şi START-STOP
+
+transmisia caracterului începe cu bitul cel mai puţin semnificativ (b0)
+
+
+Bitul de paritate este opţional
+Există şi posibilitatea ca bitul de paritate să fie setat la 0 sau 1, indiferent de paritatea efectivă a caracterulu (poti folosi asta ca o forma de adresare)
+
+
+Sincronizarea la nivel de bit se realizează cu ajutorul semnalelor de ceas locale cu aceeaşi frecvenţă. Atunci când receptorul detectează începutul unui caracter indicat prin bitul de START, porneşte un oscilator de ceas local, care permite eşantionarea corectă a biţilor individuali ai caracterului. Eşantionarea biţilor se realizează aproximativ la mijlocul intervalului corespunzător fiecărui bit.
+
+### COMUNICAȚIA SINCRONĂ – USART
+
+universal synchronous and asynchronous receiver-transmitter
+
+In cazul comunicaţiei sincrone, un cadru nu conţine un singur caracter, ci un bloc de caractere sau un mesaj. Sincronizarea la nivel de bit trebuie asigurată permanent, nu numai în timpul transmisiei propriu-zise, ci şi în intervalele de pauză.
+
+fără biţi de START şi STOP. 
+
+De aceea, timpul este divizat în mod continuu în intervale elementare la transmițător, intervale care trebuie regăsite apoi la receptor
+
+Dacă datele de transmis constau din şiruri lungi de 1 sau de 0, trebuie inserate tranziţii suficiente pentru resincronizarea ceasurilor. Asemenea tehnici sunt dificil de implementat, astfel încât se utilizează de obicei o tehnică numită comunicaţie asincronă sincronizată (numită în mod simplu comunicaţie sincronă).
+
+
+
+Pentru ajustarea oscilatorului local la începutul unui mesaj, fiecare mesaj este precedat de un număr de caractere speciale de sincronizare, de exemplu, caracterul SYN (0x16). Pentru menţinerea sincronizării, se pot insera caractere de sincronizare suplimentare în mesajul transmis, la anumite intervale de timp.
+
+
 
 La receptor există trei nivele de sincronizare:
+
 • Sincronizare la nivel de bit, utilizând circuite cu calare de fază PLL (Phase–Locked Loop), pe baza
 tranziţiilor existente în semnalul recepţionat;
+
 • Sincronizare la nivel de caracter, asigurată prin recunoaşterea anumitor caractere de sincronizare;
+
 • Sincronizare la nivel de bloc sau mesaj, care depinde de protocolul de date utiliza
 
-# Usart
+
+
+
+# Usart IAR
+
+![[Pasted image 20260130213913.png]]
+
+Modul sincron (Synchronous): funcționează ca Master (generează CLK-ul) sau Slave (primește)
+
+
+ BAUD (Baud Rate) – Rezultatul dorit
+
+mod normal => esantioneaza de 16 ori pt a fi sigur ca citirea s=a facut in siguranta
+
+viteza duble => easantioneaza doar de 8 ori : mai sensibil la zgomot dar se pot obtine viteze mai mari
+
+ În Modul Sincron (2) Deoarece există un fir de ceas care spune exact când să citești, nu mai e nevoie de atâtea verificări, deci divizarea este minimă.
 
 ## Initializare
 
