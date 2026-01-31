@@ -179,3 +179,14 @@ Instrucțiunea RET (return)
 	generează descărcarea de pe stivă și saltul la adresa de retur
 	IRET - revenire din rutina de tratare a întreruperii
 
+
+PUSHF POPF -> flagurile
+
+PUSHA POPA -> incarca toate registrele
+
+
+Instrucțiunea ACALL Absolute Call (codificare pe 2 octeți) 
+	apel de subrutină(funcție) într-un interval de maxim 2kB
+
+Instrucțiunea LCALL (Long Call) (codificare pe 3 octeți) 
+	apel de subrutină în întreg spațiul de 64kB
