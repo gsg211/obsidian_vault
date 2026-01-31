@@ -22,3 +22,5 @@
 ###### [[Cod + subiecte]]
 
 
+
+![[Pasted image 20260131191706.png]]
