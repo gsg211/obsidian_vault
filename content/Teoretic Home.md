@@ -5,6 +5,7 @@
 [[ATmega640-1280-1281-2560-2561-Datasheet-DS40002211A.pdf |datasheet]]
 
 [[SOC C1_merged.pdf]]
+
 [[informatii curs]]
 
 
@@ -25,4 +26,4 @@
 
 [[2026_atmega1280]]
 
- 
+![[Pasted image 20260131194812.png]]
