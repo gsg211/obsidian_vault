@@ -1,0 +1,10 @@
+1) d
+2) d
+3) d
+4) niciuna (133.33 ms)
+5) d
+6) a
+7) a
+8) a
+9) a (instructiunea de la breakpoint nu se executa)
+10) a

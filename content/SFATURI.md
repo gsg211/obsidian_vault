@@ -1,4 +1,13 @@
-de la cei de dinainte => atentie ca sunt atmega16
+> [!danger]
+> VEZI CA ALEA CU WATCHDOG DC NU MERGE FACUT DOAR CU ON OFF CA ALEA MERG DOAR PT RAPOARTE DRAGUTE. O SA INTREBE DUPA SA FACI CU DC DE 80/90% SI TRB SA II CALCULEZI FRECVENTA BUNA PT DC 
+> 
+
+
+
+
+
+
+# de la cei de dinainte => atentie ca sunt atmega16
 
 > [!danger]
 > Trebuie sa stiti ce face fiecare linie cod. 
