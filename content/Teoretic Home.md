@@ -29,13 +29,13 @@ vezi folderu
 
 [[Formule AI.pdf]]
 
-[[Examen2013.pdf]]
+[[Examen2013.pdf]] 
 
 [[Examen2016.pdf]]
 
 [[Examen2017.pdf]]
 
-[[Examen2020.pdf]]
+[[Examen2020.pdf]] vezi ex 9 -> 
 
 ---
 # atmega 16
