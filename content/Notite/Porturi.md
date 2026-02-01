@@ -22,6 +22,7 @@
 | Intrare   | seteaza PULL-UP  |
 | Iesire    | Seteaza valoarea |
 
+
 ### PINx
 
 read only
