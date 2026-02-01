@@ -23,7 +23,14 @@ vezi folderu
 
 [[SOC-FINAL-2025-SCURTAT.pdf]]
 
+##### ai
+
+---
+
 [[Formule AI.pdf]]
+
+[[Examen2017.pdf]]
+
 # atmega 16
  
 
