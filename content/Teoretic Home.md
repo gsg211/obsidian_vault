@@ -23,6 +23,7 @@ vezi folderu
 
 [[SOC-FINAL-2025-SCURTAT.pdf]]
 
+[[Formule AI.pdf]]
 # atmega 16
  
 
