@@ -3,7 +3,7 @@
 
 ---
 
-[[Teoretic Home]]
+###### [[Teoretic Home]]
 
 ---
 ###### [[SFATURI]]
