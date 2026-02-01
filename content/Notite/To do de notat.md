@@ -1,8 +1,9 @@
-grafice pt fiecare tip de pwm 
+grafice pt fiecare tip de pwm s 
 
-timere valori
-watchdog valori
-pwm valori
+
+timere 
+watchdog 
+pwm valori 
 
 
 prima parte a datashetului

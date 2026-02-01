@@ -3,6 +3,8 @@
 
 [google docs soc teorie](https://docs.google.com/document/d/11QiTPY21NC1k8yzRDo19epoSyaipeQCwY6QL7Y111HQ/edit?usp=sharing "Google doc soc teorie")
 
+posibil sa fie sters in viitor => [[docs teoretic.pdf]]
+
 [[SOC FINAL 2025.pdf]]
 
 [[ATmega640-1280-1281-2560-2561-Datasheet-DS40002211A.pdf |datasheet]]
@@ -49,6 +51,9 @@ vezi folderu
 
 [[2020]]
 
+[[poze teoretic]]
+
+
 # Variante refacute pt atmega1280
 
 [[2013_atmega1280]]
@@ -58,6 +63,7 @@ vezi folderu
 [[2017_atmega1280]]
 
 [[2020_atmega1280]]
+
 
 
 ![[Pasted image 20260131194812.png]]
