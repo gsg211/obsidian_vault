@@ -14,13 +14,24 @@
 
 [[To do de notat]]
 
+# printat
+
+vezi folderu 
+	print/
+
+[[Datasheet scurtat.pdf]]
+
+[[SOC-FINAL-2025-SCURTAT.pdf]]
 
 # atmega 16
  
 
 [[2013]]
+
 [[2016]]
+
 [[2017]]
+
 [[2020]]
 
 # Variante refacute pt atmega1280
@@ -31,3 +42,4 @@
 
 
 ![[Pasted image 20260131194812.png]]
+
