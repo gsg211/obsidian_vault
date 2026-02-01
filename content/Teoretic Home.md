@@ -35,7 +35,7 @@ vezi folderu
 
 [[Examen2017.pdf]]
 
-[[Examen2020.pdf]] vezi ex 9 -> 
+[[Examen2020.pdf]] vezi ex 9 -> cred ca e nedefinit
 
 ---
 # atmega 16
