@@ -1,3 +1,4 @@
+
 ![[Pasted image 20260131191433.png]]
 
 [[SOC FINAL 2025.pdf]]
@@ -24,6 +25,9 @@
 
 # Variante refacute pt atmega1280
 
-[[2026_atmega1280]]
+[[2016_atmega1280]]
+
+[[2017_atmega1280]]
+
 
 ![[Pasted image 20260131194812.png]]
