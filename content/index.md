@@ -16,11 +16,45 @@
 
 [[poze random adunate]]
 
+# Examen
 
-# Laburi
+> [!success]+ Fericire
+> legat de materiale:
+> ![[Pasted image 20260610125421.png]]
+> poti folosi quartz pt a "compila" vaultu intr-un site 
+
+### Site-uri ajutatoare
+
+FT IMPORTANT ->  [[Sites]] 
+
+chat -> https://gsgpi.barred-sunfish.ts.net/
+
+dezactiveaza culorile 
+### Modele
+
+###### notes
+
+[[cerinte model examen]]
+
+[[model poza test.png]]
+
+[[model 2]]
+
+###### pdf
+
+> [!tip] importante
+> [[Efectiv-toate-sub-rezolvate.pdf]]
+> 
+> [[Efectiv-toate-sub-de-pe-lume.pdf]]
+
+[[Rezolvare T.pdf]]
+
+[[exercitii_rez.pdf]]
+
+[[LFT.pdf]]
+# Laburi / teorie
 
 [[LFT_Lab_all_in_one.pdf]]
-
 
 [[Lab 1 -> Limbaje şi Translatoare]]
 
@@ -56,21 +90,4 @@ e rau..
 [[lab 13 -> Masini🥈]]
 
 [[lab 14 -> translari🥈]]
-
-# Examen
-
-> [!success] Fericire
-> legat de materiale:
-> ![[Pasted image 20260610125421.png]]
-> poti folosi quartz pt a compila vaultu intr-un site 
-
-[[cerinte model examen]]
-
-[[model poza test.png]]
-
-[[model 2]]
-
-[[exercitii_rez.pdf]]
-
-[[LFT.pdf]]
 
