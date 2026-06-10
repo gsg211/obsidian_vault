@@ -62,7 +62,13 @@ e rau..
 > [!success] Fericire
 > legat de materiale:
 > ![[Pasted image 20260610125421.png]]
-> poti folos
+> poti folosi quartz pt a compila vaultu intr-un site 
+
+[[cerinte model examen]]
+
+[[model poza test.png]]
+
+[[model 2]]
 
 [[exercitii_rez.pdf]]
 

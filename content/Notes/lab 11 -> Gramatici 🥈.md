@@ -1,7 +1,9 @@
 
 [[LFT_Lab_all_in_one.pdf#page=21&selection=9,0,9,8|LFT_Lab_all_in_one, page 21]]
 
-[[Lab 11 explicat]]
+> [!important] IMPORTANT
+> vezi [[Lab 11 explicat]]
+
 
 ![[Pasted image 20260609202642.png]]
 
