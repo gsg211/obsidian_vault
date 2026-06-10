@@ -1,25 +1,70 @@
+![[Pasted image 20260609134448.png|697]]
 
-![[Pasted image 20260130005046.png]]
+> [!caution]+ Pe ce se axeaza
+> Pe ce se pune accentul la lft (conform cursului 14):
+> 
+> FT POSIBIL ⭐
+> - 2
+> - 4(probabil utf 8)
+> - 6(se greșește des)
+> 
+> Poate 🥈:   11,12,13,14 
+> 
+> NU se da: 10
+> 
+> Restu mai puțin
+
+[[poze random adunate]]
+
+
+# Laburi
+
+[[LFT_Lab_all_in_one.pdf]]
+
+
+[[Lab 1 -> Limbaje şi Translatoare]]
+
+[[Lab 2 -> Componente şi Descrieri ⭐]]
+
+[[Lab 3 -> Descrieri Informale]]
+
+[[Lab 4 -> Simboluri⭐]]
+
+[[Lab 5 -> Literali]]
+
+[[Lab 6 -> Expresii⭐]]
 
 ---
 
-###### [[Teoretic Home]]
+[[Lab 7 -> Fraze]]
+
+[[lab 8 -> metode]]
+
+[[lab 9 -> Structuri]]
+
+[[lab 10 -> Grafuri]]
 
 ---
-###### [[SFATURI]]
+e rau.. 
 
----
+![[Pasted image 20260609213132.png]]
 
-###### [[PDF-uri Importante]]
+[[lab 11 -> Gramatici 🥈]]
 
----
+[[lab 12 -> Automate🥈]]
 
-###### [[Informatii generale]]
+[[lab 13 -> Masini🥈]]
 
----
+[[lab 14 -> translari🥈]]
 
-###### [[Cod + subiecte]]
+# Examen
 
----
+> [!success] Fericire
+> legat de materiale:
+> ![[Pasted image 20260610125421.png]]
+> poti folos
 
-![[Pasted image 20260131191706.png]]
+[[exercitii_rez.pdf]]
+
+[[LFT.pdf]]
+
